@@ -41,7 +41,7 @@ const SignIn = () => {
       showMessageBox(resp, "error")
       setInRequest(false)
     } else {
-      window.location.href = "/home"
+      window.location.href = "/search/games"
     }
   }
 
