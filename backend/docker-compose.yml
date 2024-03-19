@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  postgres: 
+    image: postgres:latest
+    container_name: postgres
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vortex_database
+      POSTGRES_USER: postgres
+    volumes:
+      - vortex-database:/var/lib/postgresql/data
+      # - ./data/db.sql:/docker-entrypoint-initdb.d/db.sql
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: luiz@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    restart: unless-stopped
+
+  vortex-backend:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vortex-backend
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    ports:
+      - "3001:3001"
+    restart: always
+
+volumes:
+  pgadmin-data:
+  vortex-database:

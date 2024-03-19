@@ -1,0 +1,690 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String  @id @default(cuid())
+  name                String
+  nickname            String  @unique
+  email               String  @unique
+  age                 Int?
+  bio                 String? @db.VarChar(3000)
+  password            String
+  downloadPathDefault String?
+  isAdm               Boolean @default(false)
+  isPrivate           Boolean @default(false)
+
+  recoverKey String?
+
+  image     UserImage?
+  favorites Games[]    @relation("Favorites")
+  cart      Games[]    @relation("Cart")
+  wishList  Games[]    @relation("WishList")
+
+  userAchievements       UsersAndAchievements[]
+  userGamesStatus        UserGameStatus[]
+  gamesAvaliations       Avaliations[]
+  gamesRanting           GameRating[]
+  games                  Games[]                 @relation("Users")
+  gamesDlcs              GameDlcs[]
+  friendRequestsSent     FriendRequest[]         @relation("sender")
+  friendRequestsReceived FriendRequest[]         @relation("receiver")
+  friends                FriendsAndUsers[]       @relation("UserFriends")
+  UserFriendId           FriendsAndUsers[]       @relation("UserFriend")
+  UserBlockId            BlockedFriendsOnUsers[] @relation("UserBlock")
+  blocks                 BlockedFriendsOnUsers[] @relation("BlokedUser")
+  gamesBoxs              UserGamesBox[]
+  admPenalization        AdmUserAction[]         @relation("AdmPenalization")
+  userPenalization       AdmUserAction[]         @relation("UserPenalization")
+  admAction              AdmGameAction[]
+  pathGames              GamePath[]
+  emailRequests          UserEmailRequests[]
+  groupRequests          GroupRequests[]         @relation("RequestUser")
+  admRequests            GroupRequests[]         @relation("RequestAdm")
+  banGroup               GroupBans[]             @relation("BanUser")
+  admBan                 GroupBans[]             @relation("BanAdm")
+  groupCreator           Group[]
+  groups                 Group[]                 @relation("Group")
+  adminGroups            Group[]                 @relation("AdminGroup")
+  avaliationComments     AvaliationComments[]
+  avaliationLikes        AvaliationLikes[]
+  gameDevelopers         Games[]                 @relation("Developers")
+  transactions           Transaction[]
+  groupHistoric          GroupHistoric[]
+  notifications          Notification[]
+  creditCards            CreditCards[]
+  gameUpdateHistoric     GameUpdateHistoric[]
+  privacity              PrivacySetting?
+
+  refreshToken RefreshToken?
+  confEmail    Boolean       @default(false)
+}
+
+model CreditCards {
+  id         Int    @id @default(autoincrement())
+  user       User   @relation(fields: [userId], references: [id])
+  userId     String
+  cardNumber String
+  expMonth   String
+  expYear    String
+  cvv        String
+}
+
+model PrivacySetting {
+  id           Int            @id @default(autoincrement())
+  gamesPrivacy PrivacyOptions @default(PUBLIC)
+  friendList   PrivacyOptions @default(PUBLIC)
+  groupList    PrivacyOptions @default(PUBLIC)
+  user         User           @relation(fields: [userId], references: [id])
+  userId       String         @unique
+}
+
+model UserEmailRequests {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  type      TypeEmail
+  code      String
+  actived   Boolean   @default(true)
+  date      DateTime  @default(now())
+  expiresIn DateTime
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  title     String
+  content   String
+  readed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model GamePath {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  game     Games  @relation(fields: [gameId], references: [id])
+  gameId   Int
+  pathGame String
+}
+
+model AdmUserAction {
+  id     Int                  @id @default(autoincrement())
+  adm    User                 @relation(fields: [admId], references: [id], name: "AdmPenalization")
+  admId  String
+  user   User                 @relation(fields: [userId], references: [id], name: "UserPenalization")
+  userId String
+  action AdmUserActionOptions
+  time   Int?
+  date   DateTime             @default(now())
+}
+
+model AdmGameAction {
+  id     Int                  @id @default(autoincrement())
+  adm    User                 @relation(fields: [admId], references: [id])
+  admId  String
+  game   Games                @relation(fields: [gameId], references: [id])
+  gameId Int
+  action AdmGameActionOptions
+  date   DateTime             @default(now())
+}
+
+model UsersAndAchievements {
+  user          User             @relation(fields: [userId], references: [id])
+  userId        String
+  achievement   GameAchievements @relation(fields: [achievementId], references: [id])
+  achievementId Int
+  dateConquist  DateTime         @default(now())
+
+  @@id([userId, achievementId])
+  @@unique([userId, achievementId])
+}
+
+model UserGameStatus {
+  id            Int      @id @default(autoincrement())
+  lastDay       DateTime @default(now())
+  minutesPlayed Int      @default(0)
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  game          Games    @relation(fields: [gameId], references: [id])
+  gameId        Int
+
+  @@unique([userId, gameId])
+}
+
+model FriendRequest {
+  id         Int           @id @default(autoincrement())
+  sender     User          @relation("sender", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User          @relation("receiver", fields: [receiverId], references: [id])
+  receiverId String
+  status     RequestStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+}
+
+model FriendsAndUsers {
+  user     User   @relation(fields: [userId], references: [id], name: "UserFriend")
+  userId   String
+  friend   User   @relation(fields: [friendId], references: [id], name: "UserFriends")
+  friendId String
+
+  @@id([userId, friendId])
+  @@unique([userId, friendId])
+}
+
+model BlockedFriendsOnUsers {
+  user         User     @relation(fields: [userId], references: [id], name: "UserBlock")
+  userId       String
+  blockedUser  User     @relation(fields: [blockdUserId], references: [id], name: "BlokedUser")
+  blockdUserId String
+  blockedDate  DateTime @default(now())
+
+  @@id([userId, blockdUserId])
+  @@unique([userId, blockdUserId])
+}
+
+model UserImage {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  user         User   @relation(fields: [userId], references: [id])
+  userId       String @unique
+}
+
+model RefreshToken {
+  id        Int    @id @default(autoincrement())
+  expiresIn Int
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String @unique
+}
+
+model Transaction {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  games      Games[]
+  totalPrice Float
+  buyDate    DateTime @default(now())
+}
+
+model UserGamesBox {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  hidden      Boolean @default(false)
+  user        User    @relation(fields: [userId], references: [id])
+  userId      String  @unique
+  games       Games[]
+}
+
+model Games {
+  id          Int     @id @default(autoincrement())
+  name        String
+  price       Float?
+  discount    Float?  @default(0.00)
+  description String? @default("") @db.VarChar(5000)
+  synopsi     String? @db.VarChar(1000)
+  isActive    Boolean @default(true)
+
+  imageCap            GameImageCap?
+  verticalCap         GameImageVerticalCap?
+  horizontalCap       GameImageHorizontalCap?
+  gameBackgroundImage GameBackgroundImage?
+  gamePopularImage    GamePopularImage?
+  gameIconImage       GameIconImage?
+
+  arquive               GameArquive?
+  developers            User[]                  @relation("Developers")
+  users                 User[]                  @relation("Users")
+  images                GameImages[]
+  videos                GameVideos[]
+  gameDescriptionImages GameDescriptionImages[]
+  requesites            GameRequesites?
+  categories            GameCategories[]
+  genres                Genres[]
+  subgenres             Subgenres[]
+  avaliations           Avaliations[]
+  dlcs                  GameDlcs[]
+  favorites             User[]                  @relation("Favorites")
+  carts                 User[]                  @relation("Cart")
+  wishList              User[]                  @relation("WishList")
+  gamesRanting          GameRating[]
+  transaction           Transaction[]
+  userGamesBox          UserGamesBox[]
+  admGameAcition        AdmGameAction[]
+  pathGames             GamePath[]
+
+  status             GameStatus           @default(DEVELOPING)
+  createdAt          DateTime             @default(now())
+  UserGameStatus     UserGameStatus[]
+  achievements       GameAchievements[]
+  gameUpdateHistoric GameUpdateHistoric[]
+
+  Group Group[]
+}
+
+model GameUpdateHistoric {
+  id      Int      @id @default(autoincrement())
+  game    Games    @relation(fields: [gameId], references: [id])
+  gameId  Int
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  message String
+  date    DateTime @default(now())
+}
+
+model GameAchievements {
+  id               Int                    @id @default(autoincrement())
+  game             Games                  @relation(fields: [gameId], references: [id])
+  gameId           Int
+  title            String
+  description      String
+  level            AchievementLevel       @default(BRONZE)
+  userAchievements UsersAndAchievements[]
+  image            AchievementImage?
+  type             AchievementType
+}
+
+model AchievementImage {
+  id            Int              @id @default(autoincrement())
+  name          String
+  originalName  String
+  size          Int
+  url           String
+  achievement   GameAchievements @relation(fields: [achievementId], references: [id])
+  achievementId Int              @unique
+}
+
+model GameArquive {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  execFile     String
+  game         Games  @relation(fields: [gameId], references: [id])
+  gameId       Int    @unique
+}
+
+model GameImageCap {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  game         Games  @relation(fields: [gameId], references: [id])
+  gameId       Int    @unique
+}
+
+model GameImageVerticalCap {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  game         Games  @relation(fields: [gameId], references: [id])
+  gameId       Int    @unique
+}
+
+model GameImageHorizontalCap {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  game         Games  @relation(fields: [gameId], references: [id])
+  gameId       Int    @unique
+}
+
+model GameBackgroundImage {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  game         Games  @relation(fields: [gameId], references: [id])
+  gameId       Int    @unique
+}
+
+model GamePopularImage {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  game         Games  @relation(fields: [gameId], references: [id])
+  gameId       Int    @unique
+}
+
+model GameIconImage {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  game         Games  @relation(fields: [gameId], references: [id])
+  gameId       Int    @unique
+}
+
+model GameRating {
+  id     Int    @id @default(autoincrement())
+  rating Int
+  gameId Int
+  userId String
+  game   Games  @relation(fields: [gameId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model GameImages {
+  id           Int     @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  order        Int
+  url          String
+  game         Games   @relation(fields: [gameId], references: [id])
+  gameId       Int
+  deleted      Boolean @default(false)
+}
+
+model GameVideos {
+  id           Int     @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  order        Int
+  url          String
+  game         Games   @relation(fields: [gameId], references: [id])
+  gameId       Int
+  deleted      Boolean @default(false)
+}
+
+model GameDescriptionImages {
+  id           Int     @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  game         Games   @relation(fields: [gameId], references: [id])
+  gameId       Int
+  deleted      Boolean @default(false)
+}
+
+model GameCategories {
+  id             Int     @id @default(autoincrement())
+  category       String  @unique
+  portugueseName String  @unique
+  imgUrl         String? @unique
+  games          Games[]
+}
+
+model Genres {
+  id             Int     @id @default(autoincrement())
+  genre          String  @unique
+  portugueseName String  @unique
+  games          Games[]
+}
+
+model Subgenres {
+  id             Int     @id @default(autoincrement())
+  subgenre       String  @unique
+  portugueseName String  @unique
+  games          Games[]
+}
+
+model GameDlcs {
+  id          Int              @id @default(autoincrement())
+  name        String
+  price       Float
+  discount    Float?
+  description String           @db.VarChar(3000)
+  size        Int
+  arquiveUrl  String
+  users       User[]
+  images      GameDlcImages[]
+  imageCap    GameDlcImageCap?
+  game        Games            @relation(fields: [gameId], references: [id])
+  gameId      Int              @unique
+  createdAt   DateTime         @default(now())
+  isActive    Boolean          @default(true)
+}
+
+model GameDlcImages {
+  id           Int      @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  gameDlc      GameDlcs @relation(fields: [gameId], references: [id])
+  gameId       Int      @unique
+  deleted      Boolean  @default(false)
+}
+
+model GameDlcImageCap {
+  id           Int      @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  gameDlc      GameDlcs @relation(fields: [gameDlcId], references: [id])
+  gameDlcId    Int      @unique
+}
+
+model GameRequesites {
+  id                    Int     @id @default(autoincrement())
+  minSO                 String
+  minProcessador        String
+  minMemory             String
+  minVideo              String?
+  minArmazenamento      String
+  others                Json?
+  recomendedSO          String?
+  recomendedProcessador String?
+  recomendedMemory      String?
+  recomendedVideo       String?
+  game                  Games   @relation(fields: [gameId], references: [id])
+  gameId                Int     @unique
+}
+
+model Avaliations {
+  id                 Int                  @id @default(autoincrement())
+  title              String?
+  comment            String?              @db.VarChar(1000)
+  avaliation         AvaliationOptions
+  game               Games                @relation(fields: [gameId], references: [id])
+  gameId             Int
+  user               User                 @relation(fields: [userId], references: [id])
+  userId             String
+  avaliationComments AvaliationComments[]
+  avaliationLikes    AvaliationLikes[]
+  userDateGameTime   DateTime             @default(now())
+  createdAt          DateTime             @default(now())
+  deleted            Boolean              @default(false)
+
+  @@unique([gameId, userId])
+}
+
+model AvaliationComments {
+  id           Int         @id @default(autoincrement())
+  comment      String
+  user         User        @relation(fields: [userId], references: [id])
+  userId       String
+  avaliation   Avaliations @relation(fields: [avaliationId], references: [id])
+  avaliationId Int
+  date         DateTime    @default(now())
+}
+
+model AvaliationLikes {
+  id           Int               @id @default(autoincrement())
+  type         AvaliationOptions
+  user         User              @relation(fields: [userId], references: [id])
+  userId       String
+  avaliation   Avaliations       @relation(fields: [avaliationId], references: [id])
+  avaliationId Int
+
+  @@unique([avaliationId, userId])
+}
+
+model Group {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  users         User[]          @relation("Group")
+  admins        User[]          @relation("AdminGroup")
+  creator       User            @relation(fields: [userId], references: [id])
+  userId        String
+  groupLink     String          @unique
+  header        String?
+  description   String?         @db.VarChar(3000)
+  gameRelation  Games[]
+  groupRequests GroupRequests[]
+  groupBans     GroupBans[]
+  type          GroupType
+  image         GroupImage?
+  banner        GroupBanner?
+  groupHistoric GroupHistoric[]
+
+  createdAt DateTime @default(now())
+}
+
+model GroupHistoric {
+  id      Int      @id @default(autoincrement())
+  group   Group    @relation(fields: [groupId], references: [id])
+  groupId Int
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  message String
+  date    DateTime @default(now())
+}
+
+model GroupRequests {
+  id            Int           @id @default(autoincrement())
+  group         Group         @relation(fields: [groupId], references: [id])
+  groupId       Int
+  requestUser   User          @relation(fields: [requestUserId], references: [id], name: "RequestUser")
+  requestUserId String
+  adm           User?         @relation(fields: [admId], references: [id], name: "RequestAdm")
+  admId         String?
+  status        RequestStatus
+  actionDate    DateTime?
+  date          DateTime      @default(now())
+}
+
+model GroupBans {
+  id      Int       @id @default(autoincrement())
+  group   Group     @relation(fields: [groupId], references: [id])
+  groupId Int
+  user    User      @relation(fields: [userId], references: [id], name: "BanUser")
+  userId  String
+  adm     User?     @relation(fields: [admId], references: [id], name: "BanAdm")
+  admId   String?
+  status  BanStatus @default(BANNED)
+  date    DateTime  @default(now())
+}
+
+model GroupImage {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  group        Group  @relation(fields: [groupId], references: [id])
+  groupId      Int    @unique
+}
+
+model GroupBanner {
+  id           Int    @id @default(autoincrement())
+  name         String
+  originalName String
+  size         Int
+  url          String
+  group        Group  @relation(fields: [groupId], references: [id])
+  groupId      Int    @unique
+}
+
+// model GroupMessages {
+//   id Int @id @default(autoincrement())
+//   user User @relation(fields: [userId], references: [id])
+//   userId String
+//   type TypeMessage
+//   content String
+//   group Group @relation(fields: [groupId], references: [id])
+//   groupId Int
+// }
+
+enum BanStatus {
+  BANNED
+  UNBANNED
+}
+
+enum GroupType {
+  PUBLIC
+  RESTRICT
+  PRIVATE
+}
+
+enum GameStatus {
+  PENDING
+  ACEPTED
+  DECLINED
+  CANCELED
+  DEVELOPING
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELED
+}
+
+enum AvaliationOptions {
+  LIKE
+  DISLIKE
+}
+
+enum AchievementType {
+  DEFAULT
+  SECRET
+}
+
+enum AchievementLevel {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum TypeEmail {
+  ConfEmail
+  ForgetPassword
+}
+
+enum AdmGameActionOptions {
+  DELETE
+  DECLINED
+  ACEPTED
+  DISABLE
+}
+
+enum AdmUserActionOptions {
+  BAN
+  TIMEOUT
+  PERMANETBAN
+  UNBAN
+  REMOVETIMEOUT
+}
+
+enum PrivacyOptions {
+  FRIENDS
+  PUBLIC
+  PRIVATE
+}
