@@ -51,7 +51,7 @@ const Profile = async ({ params: { userId } }: ProfileProps) => {
     }
   }
 
-  if (typeof userRequest.response === "string") return <></>
+  if (typeof userRequest.response === "string") return JSON.stringify(userRequest)
 
   const { games, groups: userGroups, friends, favorites, wishList, gamesAvaliations, userAchievements, adminGroups, privacity, id }
     = userRequest.response as Profile
