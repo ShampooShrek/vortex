@@ -21,30 +21,39 @@ const Profile = async ({ params: { userId } }: ProfileProps) => {
 
   const useCookies = cookies()
   const token = useCookies.get('vortex-auth-token')
-  let user: UserAuth | null = null
-  let social: SocialRequestInterface | null = null
+
+  const promises: Promise<any>[] = []
 
   if (token) {
-    const resp: UserAuth | string = await ApiRequests.GetUserByToken(token.value)
-    if (typeof resp !== "string") {
-      user = resp as UserAuth
-      const socialResponse = await ApiRequests.SocialRequest(token.value)
-      if (typeof socialResponse !== "string") {
-        social = socialResponse
-      }
-    }
+    promises.push(ApiRequests.GetUserByToken(token.value))
+    promises.push(ApiRequests.SocialRequest(token.value))
+  } else {
+    promises.push(new Promise((res) => res(null)))
+    promises.push(new Promise((res) => res(null)))
   }
 
-  const userRequest: Response<Profile> = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
+  promises.push(fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
     cache: "no-store",
     headers: {
       'authorization': token ? `Bearer ${token.value}` : ""
     }
-  }).then(resp => resp.json())
+  }).then(resp => resp.json()))
+
+  const [userResp, socialResp, userRequest] = await Promise.all(promises)
+
+  let user: UserAuth | null = null
+  let social: SocialRequestInterface | null = null
+
+  if (userResp && typeof userResp !== "string") {
+    user = userResp as UserAuth
+    if (socialResp && typeof socialResp !== "string") {
+      social = socialResp
+    }
+  }
 
   if (typeof userRequest.response === "string") redirect("/home")
 
-  const { games, groups: userGroups, friends, favorites, wishList, nickname, image, name, gamesAvaliations, userAchievements, adminGroups, privacity, id }
+  const { games, groups: userGroups, friends, favorites, wishList, gamesAvaliations, userAchievements, adminGroups, privacity, id }
     = userRequest.response as Profile
 
   const groups = [...adminGroups ?? [], ...userGroups ?? []]
