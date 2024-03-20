@@ -229,42 +229,77 @@ export const getUsers = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   const { userId } = req.params
   const token = req.body.token
-
-
   let user: null | User = null
-
   try {
-    const userProfile = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        userAchievements: { select: { achievement: { include: { image: true } } } },
-        image: true,
-        gamesAvaliations: { where: { game: { status: "ACEPTED" }, deleted: false }, include: { game: { include: { horizontalCap: true } } } },
-        groups: { include: { image: true, users: true } },
-        adminGroups: { include: { image: true, users: true } },
-        friends: { include: { user: { include: { image: true } } } },
-        favorites: { include: { horizontalCap: true, achievements: { include: { image: true } } } },
-        wishList: { include: { horizontalCap: true } },
-        games: {
-          where: { status: "ACEPTED" },
-          include: {
-            achievements: true,
-            horizontalCap: true,
-            verticalCap: true
-          },
-          take: 3,
-        },
-        privacity: true
-      }
-    }) as any
+    const getUserProfile = async () => {
+      return await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          image: true,
+          privacity: true
+        }
+      });
+    }
 
-    if (!userProfile) {
+    const getGamesAndAchievements = async () => {
+      return await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          games: {
+            where: { status: "ACEPTED" },
+            include: {
+              achievements: true,
+              horizontalCap: true,
+              verticalCap: true
+            },
+            take: 3,
+          },
+          favorites: { include: { horizontalCap: true, achievements: { include: { image: true } } } },
+          wishList: { include: { horizontalCap: true } },
+          userAchievements: { select: { achievement: { include: { image: true } } } }
+        }
+      });
+    }
+
+    const getGroups = async () => {
+      return await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          groups: { include: { image: true, users: true } },
+          adminGroups: { include: { image: true, users: true } }
+        }
+      });
+    }
+
+    const getFriends = async (): Promise<any> => {
+      return await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          friends: { include: { user: { include: { image: true } } } }
+        }
+      });
+    }
+    let [userProfile, gamesAndAchievements, groups, friends] = await Promise.all([
+      getUserProfile(),
+      getGamesAndAchievements(),
+      getGroups(),
+      getFriends()
+    ]);
+
+    if (!userProfile || !gamesAndAchievements || !groups || !friends) {
       return res.status(404).json({ type: "error", response: "Perfil não encontrado" });
     }
 
-    userProfile.friends = userProfile.friends.map((friend: any) => ({ ...friend.user }))
+    friends = friends.friends.map((friend: any) => ({ ...friend.user }))
 
-    const { friends, privacity } = userProfile;
+    const { privacity } = userProfile;
+
+    const profile = {
+      ...userProfile,
+      ...gamesAndAchievements,
+      ...groups,
+      ...friends
+    }
 
     if (token && token.userId) {
       const tokenUserId = token.userId
@@ -273,21 +308,21 @@ export const getUser = async (req: Request, res: Response) => {
       })
 
       if (user && user.id === userProfile.id) {
-        return res.status(200).json({ type: "success", response: userProfile })
+        return res.status(200).json({ type: "success", response: profile })
       }
     }
 
     if (privacity) {
-      if (privacity.friendList === "PRIVATE") delete userProfile.friends;
+      if (privacity.friendList === "PRIVATE") delete profile.friends;
       if (privacity.gamesPrivacy === "PRIVATE") {
-        delete userProfile.games;
-        delete userProfile.favorites;
-        delete userProfile.wishList;
-        delete userProfile.userAchievements;
+        delete profile.games;
+        delete profile.favorites;
+        delete profile.wishList;
+        delete profile.userAchievements;
       }
       if (privacity.groupList === "PRIVATE") {
-        delete userProfile.groups;
-        delete userProfile.adminGroups;
+        delete profile.groups;
+        delete profile.adminGroups;
       }
     }
 
@@ -295,22 +330,22 @@ export const getUser = async (req: Request, res: Response) => {
       const userIsFriend = friends.find((u: any) => u.id === user!.id);
 
       if (friends && privacity?.friendList === "FRIENDS" && !userIsFriend) {
-        delete userProfile.friends;
+        delete profile.friends;
       }
 
-      if (userProfile.games && privacity?.gamesPrivacy === "FRIENDS" && !userIsFriend) {
-        delete userProfile.games;
-        delete userProfile.favorites;
-        delete userProfile.wishList;
-        delete userProfile.userAchievements;
+      if (profile.games && privacity?.gamesPrivacy === "FRIENDS" && !userIsFriend) {
+        delete profile.games;
+        delete profile.favorites;
+        delete profile.wishList;
+        delete profile.userAchievements;
       }
 
-      if (userProfile.groups && privacity?.groupList === "FRIENDS" && !userIsFriend) {
-        delete userProfile.groups;
-        delete userProfile.adminGroups;
+      if (profile.groups && privacity?.groupList === "FRIENDS" && !userIsFriend) {
+        delete profile.groups;
+        delete profile.adminGroups;
       }
     }
-    return res.status(200).json({ type: "success", response: userProfile })
+    return res.status(200).json({ type: "success", response: profile })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
   } finally {

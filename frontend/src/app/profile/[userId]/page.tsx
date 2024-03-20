@@ -50,6 +50,8 @@ const Profile = async ({ params: { userId } }: ProfileProps) => {
       social = socialResp
     }
   }
+  console.log
+    (userRequest)
 
   if (typeof userRequest.response === "string") redirect("/home")
 
