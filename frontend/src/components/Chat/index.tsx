@@ -10,7 +10,6 @@ import * as S from "./style"
 import { FriendsWithMessages, GroupMessage, GroupMessageReceived, GroupsWithMessages, Message } from "@/models/frontModels"
 import { FileIcon, Bars3Icon, MicrophoneIcon, PauseIcon, PlayIcon, PlusIcon, Trash, XIcon } from "../Icons"
 import TextArea from "../TextArea"
-import socket from "@/services/socket"
 import ApiRequest from "@/utils/ApiRequests"
 import messageAuth from "@/data/hooks/messageHook"
 import Video from "./Video"
@@ -26,7 +25,8 @@ export default function Chat() {
     setFriendsWithMessages,
     getGroups,
     groupsWithMessages,
-    setGroupsWithMessages
+    setGroupsWithMessages,
+    socket
   } = authHook()
 
 
@@ -166,13 +166,16 @@ export default function Chat() {
   }, [groupsSearch])
 
   useEffect(() => {
-    socket.on("message-received", (message: Message) => setLastMessage(message))
+    if (socket) {
+      socket.on("message-received", (message: Message) => setLastMessage(message))
 
 
-    return () => {
-      socket.off("message-received")
+      return () => {
+        socket.off("message-received")
+      }
+
     }
-  }, [friendsWithMessages])
+  }, [friendsWithMessages, socket])
 
   useEffect(() => {
     scrollToBottom()
@@ -394,7 +397,7 @@ export default function Chat() {
 
         const idRoom = [user.id, selectedFriend!.id].sort()
         const roomKey = `${idRoom[0]}-${idRoom[1]}`
-        socket.emit("send-message", ({ data, roomKey }))
+        socket!.emit("send-message", ({ data, roomKey }))
       } else if (selectedGroup) {
         const data: GroupMessage = {
           content: message,
@@ -403,7 +406,7 @@ export default function Chat() {
           sender: user.id,
           type: "text"
         }
-        socket.emit("send-group-message", data)
+        socket!.emit("send-group-message", data)
       }
     } else {
       const form = new FormData()
@@ -423,7 +426,7 @@ export default function Chat() {
 
             const idRoom = [user.id, selectedFriend!.id].sort()
             const roomKey = `${idRoom[0]}-${idRoom[1]}`
-            socket.emit("send-message", ({ data, roomKey }))
+            socket!.emit("send-message", ({ data, roomKey }))
           } else {
             showMessageBox(fileUrl.response as string, "error")
           }
@@ -438,7 +441,7 @@ export default function Chat() {
               sender: user.id,
               type: type
             }
-            socket.emit("send-group-message", data)
+            socket!.emit("send-group-message", data)
           } else {
             showMessageBox(fileUrl.response as string, "error")
           }

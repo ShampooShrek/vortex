@@ -6,7 +6,7 @@ import { FriendsWithMessages, GamesStore, GroupMessage, GroupMessageReceived, Gr
 import { useRouter } from "next/navigation"
 import api from "@/services/api"
 import ApiRequest from "@/utils/ApiRequests"
-import socket from "@/services/socket"
+import { Socket, io } from "socket.io-client"
 
 interface LoginResponse {
   token: string
@@ -41,7 +41,7 @@ interface ContextProps {
   getFriends(): Promise<void>
   getGroups(): Promise<void>
   newMessages: Message[]
-
+  socket: Socket | null
 }
 
 const setAuthCookies = (key: string, login: boolean, value: string) => {
@@ -66,6 +66,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [newMessages, setNewMessages] = useState<Message[]>([])
   const [logged, setLogged] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [socket, setSocket] = useState<Socket | null>(null)
 
   const router = useRouter()
 
@@ -77,6 +78,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         setLogged(false)
         setLoading(false)
       } else {
+        setSocket(io(`${process.env.NEXT_PUBLIC_API_URL}`))
         const response = await ApiRequest<UserAuth>("/api/users/auth/authentication", "post", { token })
         if (response && response.type === "success") {
           const dataUser = response.response as UserAuth
@@ -84,7 +86,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             ...dataUser, adminGroups: [], groups: []
           })
           setLogged(true)
-          socket.emit("login", dataUser.id)
         }
         setLoading(false)
       }
@@ -94,57 +95,76 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   }, [])
 
   useEffect(() => {
-    socket.on("users-online", (usersOnline) => setUsersOnline(usersOnline))
-    return () => {
-      socket.off("users-online")
+    if (!loading) {
+      const connection = io(`${process.env.NEXT_PUBLIC_API_URL}`)
+      setSocket(connection)
     }
-  }, [])
+  }, [loading])
 
   useEffect(() => {
-    socket.on("message-received", (createMessage: Message) => {
-      const { recipient, sender } = createMessage
-      const friend = friendsWithMessages.find(f => f.id === sender || f.id === recipient)
-      if (friend) {
-        friend.messages.push(createMessage)
-        setFriendsWithMessages(prevFriends => {
-          const updatedFriends = [...prevFriends]
-          const friendIndex = updatedFriends.findIndex(f => f.id === friend.id)
-          if (friendIndex !== -1) {
-            updatedFriends[friendIndex] = friend
-          }
-          return updatedFriends
-        })
-      }
-    })
+    if (logged && socket) {
+      socket.emit("login", user!.id)
 
-
-    return () => {
-      socket.off("message-received")
+      return () => { socket.off("login") }
     }
-  }, [friendsWithMessages])
+  }, [logged, socket])
 
   useEffect(() => {
-    socket.on("group-message-received", (createMessage: GroupMessage) => {
-      const { group: groupId } = createMessage
-      const group = groupsWithMessages.find(g => g.id === groupId)
-      if (group) {
-        group.messages.push(createMessage as GroupMessageReceived)
-        setGroupsWithMessages(prevGroup => {
-          const updatedGroups = [...prevGroup]
-          const groupIndex = updatedGroups.findIndex(f => f.id === groupId)
-          if (groupIndex !== -1) {
-            updatedGroups[groupIndex] = group
-          }
-          return updatedGroups
-        })
+    if (socket) {
+      socket.on("users-online", (usersOnline) => setUsersOnline(usersOnline))
+      return () => {
+        socket.off("users-online")
       }
-    })
 
-
-    return () => {
-      socket.off("group-message-received")
     }
-  }, [groupsWithMessages])
+  }, [socket])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("message-received", (createMessage: Message) => {
+        const { recipient, sender } = createMessage
+        const friend = friendsWithMessages.find(f => f.id === sender || f.id === recipient)
+        if (friend) {
+          friend.messages.push(createMessage)
+          setFriendsWithMessages(prevFriends => {
+            const updatedFriends = [...prevFriends]
+            const friendIndex = updatedFriends.findIndex(f => f.id === friend.id)
+            if (friendIndex !== -1) {
+              updatedFriends[friendIndex] = friend
+            }
+            return updatedFriends
+          })
+        }
+      })
+      return () => {
+        socket.off("message-received")
+      }
+    }
+  }, [friendsWithMessages, socket])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("group-message-received", (createMessage: GroupMessage) => {
+        const { group: groupId } = createMessage
+        const group = groupsWithMessages.find(g => g.id === groupId)
+        if (group) {
+          group.messages.push(createMessage as GroupMessageReceived)
+          setGroupsWithMessages(prevGroup => {
+            const updatedGroups = [...prevGroup]
+            const groupIndex = updatedGroups.findIndex(f => f.id === groupId)
+            if (groupIndex !== -1) {
+              updatedGroups[groupIndex] = group
+            }
+            return updatedGroups
+          })
+        }
+      })
+
+      return () => {
+        socket.off("group-message-received")
+      }
+    }
+  }, [groupsWithMessages, socket])
 
   const login = async (nicknameOrEmail: string, password: string) => {
     const response = await ApiRequest<LoginResponse>("/api/users/auth", "post", { nicknameOrEmail, password })
@@ -155,7 +175,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         setAuthCookies("vortex-auth-token", true, data.token)
         setUser(data.user)
         setLogged(true)
-        socket.emit("login", data.user.id)
         router.push("/home")
         return true
       } else {
@@ -214,7 +233,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           const data = resp.response as FriendsWithMessages[]
           setFriendsWithMessages(data)
           data.map(f => {
-            socket.emit("join-room", { id1: user.id, id2: f.id })
+            socket!.emit("join-room", { id1: user.id, id2: f.id })
           })
         }
       }
@@ -229,7 +248,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           const data = resp.response as GroupsWithMessages[]
           setGroupsWithMessages(data)
           data.map(g => {
-            socket.emit("join-group-room", { groupId: g.id })
+            socket!.emit("join-group-room", { groupId: g.id })
           })
         }
       }
@@ -285,7 +304,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       login,
       logout,
       user,
-      loading
+      loading,
+      socket
     }}
     >
       {children}
