@@ -50,10 +50,8 @@ const Profile = async ({ params: { userId } }: ProfileProps) => {
       social = socialResp
     }
   }
-  console.log
-    (userRequest)
 
-  if (typeof userRequest.response === "string") redirect("/home")
+  if (typeof userRequest.response === "string") return <></>
 
   const { games, groups: userGroups, friends, favorites, wishList, gamesAvaliations, userAchievements, adminGroups, privacity, id }
     = userRequest.response as Profile
