@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import DetailsHeader from "@/components/profile/DetailsHeader"
 import authHook from "@/data/hooks/authHook"
 import { FiltersOptions, GamesStoreEdit } from "@/models/frontModels"
-import { redirect } from "next/navigation"
 import ContainerGameJolt from "../ContainerGameJolt"
 import AdminPendingGames from "./PendingGames"
 
@@ -17,9 +16,6 @@ const Admin = ({ pendingGames }: AdminProps) => {
   const { loading, user } = authHook()
   const [sectionKey, setSectionKey] = useState("pendingGames")
 
-  if (loading) return ""
-  if (!user) redirect("/home")
-
 
   const filters: FiltersOptions[] = [
     { key: "pendingGames", option: "Jogos Pendentes", onClick: () => handleSelectFilterKey("pendingGames") },
@@ -28,10 +24,11 @@ const Admin = ({ pendingGames }: AdminProps) => {
   const handleSelectFilterKey = (key: string) => {
     setSectionKey(key)
   }
+  if (loading || !user) return <p></p>
 
   return (
     <>
-      <DetailsHeader id={user.id} nickname={user.nickname} sections={["administração", "administrador"]} />
+      <DetailsHeader id={user!.id} nickname={user!.nickname} sections={["administração", "administrador"]} />
       <div>
         <ContainerGameJolt
           filters={filters}
