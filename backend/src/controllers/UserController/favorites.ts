@@ -31,8 +31,6 @@ export const updateFavorites = async (req: Request, res: Response) => {
     return res.status(200).send({ type: "success", response: "OK" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -60,8 +58,6 @@ export const addToFavorites = async (req: Request, res: Response) => {
     return res.status(200).send({ type: "success", response: "OK" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -89,8 +85,6 @@ export const removeFromFavorites = async (req: Request, res: Response) => {
     return res.status(200).send({ type: "success", response: "OK" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -106,7 +100,5 @@ export const getFavorites = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: favorites })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

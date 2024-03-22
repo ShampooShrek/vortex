@@ -25,8 +25,6 @@ export const postCategory = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: categoryCreated })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -42,8 +40,6 @@ export const getCategories = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -69,8 +65,6 @@ export const getGameByCategories = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: games })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -120,8 +114,6 @@ export const postCategoyInGames = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -165,8 +157,6 @@ export const removeCategoryInGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Categoria removida com sucesso!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    prisma.$disconnect()
   }
 }
 
@@ -265,7 +255,5 @@ export const GetGamesWithCoisaInCategories = async (req: Request, res: Response)
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

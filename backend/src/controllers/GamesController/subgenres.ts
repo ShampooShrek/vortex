@@ -25,8 +25,6 @@ export const postSubgenres = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: genreCreated })
   } catch (err) {
     return res.status(400).send({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -39,8 +37,6 @@ export const getSubgenres = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: subgenres })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -85,8 +81,6 @@ export const postSubgenresInGames = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -128,8 +122,6 @@ export const removeSubgenreInGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Subgênero removida com sucesso!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -215,7 +207,5 @@ export const GetGamesWithCoisaInSubgenres = async (req: Request, res: Response) 
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

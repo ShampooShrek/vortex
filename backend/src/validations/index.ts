@@ -36,7 +36,5 @@ export const UserIsDev = async (userId: string, gameId: number, error: boolean =
     return true
   } catch (err) {
     return error
-  } finally {
-    await prisma.$disconnect()
   }
 }

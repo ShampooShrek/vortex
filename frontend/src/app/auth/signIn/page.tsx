@@ -42,8 +42,7 @@ const SignIn = () => {
       showMessageBox(resp, "error")
       setInRequest(false)
     } else {
-      router.refresh()
-      router.push("/home")
+      window.location.href = "/home"
     }
   }
 

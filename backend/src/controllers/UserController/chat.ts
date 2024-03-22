@@ -16,8 +16,6 @@ export const getFriends = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -40,8 +38,6 @@ export const addChatImage = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -65,8 +61,6 @@ export const addChatVideo = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -90,8 +84,6 @@ export const addChatFile = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -115,7 +107,5 @@ export const addChatAudio = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

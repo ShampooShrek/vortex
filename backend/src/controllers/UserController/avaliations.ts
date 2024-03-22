@@ -47,8 +47,6 @@ export const postAvaliations = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: createAvaliation })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -83,8 +81,6 @@ export const getAvaliation = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: avaliation })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -100,8 +96,6 @@ export const getUserAvaliations = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: avaliations })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -149,8 +143,6 @@ export const deleteAvaliation = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Avaliação deletada com sucesso" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -192,8 +184,6 @@ export const likeAvaliations = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -220,7 +210,5 @@ export const commentAvalaitions = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

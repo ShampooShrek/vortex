@@ -33,8 +33,6 @@ export const postGame = async (req: Request, res: Response) => {
     return res.status(201).json({ type: "success", response: game })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -118,8 +116,6 @@ export const getGame = async (req: Request, res: Response) => {
     })
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -193,8 +189,6 @@ export const getBetaGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: game })
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -246,8 +240,6 @@ export const getGameEdit = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: game })
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -264,8 +256,6 @@ export const getGameDevelopers = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: games })
   } catch (e: any) {
     return res.status(e.status ?? 500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -346,8 +336,6 @@ export const putGame = async (req: Request, res: Response) => {
     return res.status(201).json({ type: "success", response: gameUpdate })
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -384,8 +372,6 @@ export const putGameDescription = async (req: Request, res: Response) => {
     return res.status(201).json({ type: "success", response: gameUpdate })
   } catch (e: any) {
     return res.status(400).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -451,8 +437,6 @@ export const publisherGame = async (req: Request, res: Response) => {
 
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -491,8 +475,6 @@ export const CancelSendGame = async (req: Request, res: Response) => {
 
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -521,8 +503,6 @@ export const desactiveGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Jogo desativado com sucesso!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -551,8 +531,6 @@ export const activeGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Jogo ativado com sucesso!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -564,8 +542,6 @@ export const getDesactivedGames = async (req: Request, res: Response) => {
 
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -608,8 +584,6 @@ export const changeGameStatus = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: game })
   } catch (err: any) {
     return res.status(err.status ?? 500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -631,8 +605,6 @@ export const getGameAvaliations = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: avaliations })
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -653,8 +625,6 @@ export const getGameImagesAndVideos = async (req: Request, res: Response) => {
 
   } catch (e: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -685,8 +655,6 @@ export const getPopulars = async () => {
     return popularGames
   } catch (err) {
     return error500Msg
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -728,8 +696,6 @@ export const GetBetterOfCategory = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -769,8 +735,6 @@ export const GetBetterOfGenre = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -810,8 +774,6 @@ export const GetBetterOfSubgenre = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -941,8 +903,6 @@ export const FilterGamesByTags = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -1101,8 +1061,6 @@ export const MainSearchGames = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -1118,8 +1076,6 @@ export const GetFilters = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -1141,8 +1097,6 @@ export const GetGameDevelopers = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: game })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -1285,8 +1239,6 @@ export const GetGamesByName = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: games })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -1381,8 +1333,6 @@ export const HomeRequest = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg });
-  } finally {
-    await prisma.$disconnect();
   }
 };
 
@@ -1406,8 +1356,6 @@ export const HomeGames = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg });
-  } finally {
-    await prisma.$disconnect();
   }
 };
 

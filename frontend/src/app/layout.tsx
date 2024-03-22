@@ -18,18 +18,23 @@ export default async function RootLayout({
 }) {
   let user: null | UserAuth = null
   const token = cookies().get("vortex-auth-token")
-  const href = headers().get("referer")
-  if (href) {
-    const pathname = href.split(`${process.env.NEXT_PUBLIC_HREF ?? "http://localhost:3000"}`)[1]
-    const noRequestUrls = ["/", "/auth/signIn", "/auth/signUp"]
+  // const href = headers().get("referer")
+  // headers().forEach((v, l) => {
+  //   console.log(`${l} - ${v}\n`)
+  // })
 
-    const inNoRequestsUrl = noRequestUrls.some(loc => loc === pathname)
+  // if (href) {
+  // const pathname = href.split(`${process.env.NEXT_PUBLIC_HREF ?? "http://localhost:3000"}`)[1]
+  // const noRequestUrls = ["/", "/auth/signIn", "/auth/signUp"]
 
-    if (token && !inNoRequestsUrl) {
-      const resp = await GetUserByToken(token.value)
-      if (typeof resp !== "string") user = resp
-    }
+  // const inNoRequestsUrl = noRequestUrls.some(loc => loc === pathname)
+
+  if (token) {
+    const resp = await GetUserByToken(token.value)
+    if (typeof resp !== "string") user = resp
+    else cookies().delete("vortex-auth-token")
   }
+  // }
 
   return (
     <html lang="pt-br">

@@ -34,8 +34,6 @@ export const GetIdByToken = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: { id: user.id } })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

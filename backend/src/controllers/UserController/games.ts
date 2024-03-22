@@ -31,8 +31,6 @@ export const userConnectAchievement = async (req: Request, res: Response) => {
     return res.status(200).send({ type: "error", response: "Conquista Adicionada" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -101,8 +99,6 @@ export const getUserAchievements = async (req: Request, res: Response) => {
     return res.status(200).send({ type: "success", response: achievements })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -120,8 +116,6 @@ export const disconnectAchievement = async (req: Request, res: Response) => {
     return res.status(200).send({ type: "error", response: "OK!!" })
   } catch (err) {
     return res.status(400).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 
@@ -146,8 +140,6 @@ export const connectGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK!!" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -209,8 +201,6 @@ export const GetGamesBox = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -244,8 +234,6 @@ export const createGameBox = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -295,8 +283,6 @@ export const updateGameBox = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -339,8 +325,6 @@ export const downloadGame = async (req: Request, res: Response) => {
     }
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

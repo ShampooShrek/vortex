@@ -62,8 +62,6 @@ export const postUser = async (req: Request, res: Response) => {
     }
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -84,8 +82,6 @@ export const SendConfEmail = async (req: Request, res: Response) => {
     }
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -161,8 +157,6 @@ export const confEmail = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -180,8 +174,6 @@ export const GetUserByRecoverKey = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -206,8 +198,6 @@ export const RecoverPasswordEmail = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "E-mail enviado com sucesso!!" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -358,8 +348,6 @@ export const getUser = async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err)
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -423,8 +411,6 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: putUser })
   } catch (err) {
     return res.status(500).json({ type: "error", resposne: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -456,8 +442,6 @@ export const updateUserPrivacy = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: updatedUser })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -491,8 +475,6 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Senha atualizada com sucesso!" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -576,8 +558,6 @@ export const GetDetails = async (req: Request, res: Response) => {
     }
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -620,8 +600,6 @@ export const Social = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -665,8 +643,6 @@ export const SocialIds = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -692,8 +668,6 @@ export const Edit = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -709,8 +683,6 @@ export const SearchUsers = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: users })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

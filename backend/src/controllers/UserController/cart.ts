@@ -33,8 +33,6 @@ export const addItemCart = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: game })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -62,8 +60,6 @@ export const getCartItems = async (req: Request, res: Response) => {
     }
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -86,8 +82,6 @@ export const removeItemCart = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK!!" })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -125,8 +119,6 @@ export const createTransaction = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: games })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -154,7 +146,5 @@ export const getTransactions = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

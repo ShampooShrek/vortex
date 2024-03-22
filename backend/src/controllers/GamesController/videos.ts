@@ -44,8 +44,6 @@ export const postGameVideos = async (req: Request, res: Response) => {
       return res.status(200).json({ type: "success", response: "OK" })
     } catch (err: any) {
       return res.status(500).json({ type: "error", response: error500Msg })
-    } finally {
-      await prisma.$disconnect()
     }
   } else {
     return res.status(400).json({ type: "error", response: "Sem Arquivo" })
@@ -82,8 +80,6 @@ export const putGameVideo = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Video atualizada com sucesso" })
   } catch (err: any) {
     return res.status(err.status ?? 500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -115,7 +111,5 @@ export const deleteGameVideo = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Video deletado com sucesso" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

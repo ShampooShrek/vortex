@@ -24,8 +24,6 @@ export const postGenres = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: genreCreated })
   } catch (err) {
     return res.status(500).send({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -39,8 +37,6 @@ export const getGenres = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: genres })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -89,8 +85,6 @@ export const postGenreInGames = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -127,8 +121,6 @@ export const removeGenreInGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Gêneros removidos com sucesso!!" })
   } catch (err: any) {
     return res.status(err.status ?? 500).json({ type: "error", response: err.msg ?? error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -215,8 +207,6 @@ export const GetGamesWithCoisaInGenres = async (req: Request, res: Response) => 
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

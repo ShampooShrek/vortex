@@ -49,8 +49,6 @@ export const postGameImages = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -86,8 +84,6 @@ export const getGameImages = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(err.status ?? 500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -125,8 +121,6 @@ export const putGameImage = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: img ?? image })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -232,8 +226,6 @@ export const postGameImage = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK!!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -275,8 +267,6 @@ export const postGameDescriptionImages = async (req: Request, res: Response) => 
     return res.status(200).json({ type: "success", response: descriptionImage })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

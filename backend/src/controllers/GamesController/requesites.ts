@@ -60,7 +60,5 @@ export const PostRequesites = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

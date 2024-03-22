@@ -27,7 +27,5 @@ export const GetAdminData = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: { games: games } })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: { games: error500Msg } })
-  } finally {
-    await prisma.$disconnect()
   }
 }

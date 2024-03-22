@@ -57,8 +57,6 @@ export const createGroup = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: group })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -83,8 +81,6 @@ export const getGroups = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: { groups, adminGroups } })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -119,8 +115,6 @@ export const getGroup = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -206,8 +200,6 @@ export const updateGroup = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: updatedGroup })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: err })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -306,8 +298,6 @@ export const updateGroupImages = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -346,8 +336,6 @@ export const disconnectGroupGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -385,8 +373,6 @@ export const connectGroupGame = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -444,8 +430,6 @@ export const userGroupRequest = async (req: Request, res: Response) => {
     }
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -539,8 +523,6 @@ export const requestAction = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: group })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -570,8 +552,6 @@ export const cancelRequest = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -637,8 +617,6 @@ export const UpdateMembers = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: group })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -676,8 +654,6 @@ export const userQuitGroup = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: { groupHistoric: historics } })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -729,8 +705,6 @@ export const admQuitUser = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: updatedGroup })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -786,8 +760,6 @@ export const admUnbanUser = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: { groupHistoric: historics } })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -847,8 +819,6 @@ export const admBanUser = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: updatedGroup })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -877,8 +847,6 @@ export const getGroupsChat = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: groupsWithMessages })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -952,8 +920,6 @@ export const getMessages = async (req: Request, res: Response) => {
 
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -969,7 +935,5 @@ export const SearchGroups = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: groups })
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }

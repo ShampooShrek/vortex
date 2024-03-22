@@ -74,8 +74,6 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
     return res.status(200).send({ type: "success", response: friendRequest })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -93,8 +91,6 @@ export const deleteFriendRequest = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -179,8 +175,6 @@ export const friendRequestAction = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: friendRequest })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -207,8 +201,6 @@ export const removeFriend = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "OK!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: "Ops, algo deu errado, tente novamente mais tarde" })
-  } finally {
-    await prisma.$disconnect()
   }
 
 }
@@ -252,8 +244,6 @@ export const getFriendsRequests = async (req: Request, res: Response) => {
     }
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -284,8 +274,6 @@ export const getFriends = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: friendsWithMessages })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -355,8 +343,6 @@ export const blockUser = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: BlockedUsers })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -379,8 +365,6 @@ export const getBlockedUsers = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: blockedUsers })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -408,8 +392,6 @@ export const desblockFriend = async (req: Request, res: Response) => {
     return res.status(200).json({ type: "success", response: "Usuário desbloqueado!" })
   } catch (err: any) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
