@@ -1,7 +1,7 @@
 import SearchUsers from "@/components/Search/Users";
 import { Layout } from "@/components/layout";
 import { cookies } from "next/headers";
-import { SocialRequest } from "@/utils/ApiRequests"
+import { SocialIdsRequest } from "@/utils/ApiRequests"
 
 
 export default async function SearchUsersPage() {
@@ -11,13 +11,13 @@ export default async function SearchUsersPage() {
 
   let data = null;
 
-  if(token) {
-    data = await SocialRequest(token.value)
+  if (token) {
+    data = await SocialIdsRequest(token.value)
   }
 
   return (
     <Layout>
-      <SearchUsers  data={data} />
+      <SearchUsers data={data} />
     </Layout>
   )
 }

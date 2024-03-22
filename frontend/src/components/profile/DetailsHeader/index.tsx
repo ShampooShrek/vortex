@@ -5,18 +5,26 @@ import * as S from "./style"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { GamesStore } from "@/models/frontModels"
+import authHook from "@/data/hooks/authHook"
 
 
 interface DetailsHeaderProps {
-  id: string
-  nickname: string
+  id?: string
+  nickname?: string
   image?: UserImage | null
   game?: GamesStore | string
   sections?: string[]
 }
 
-const DetailsHeader = ({ image, nickname, game, id, sections }: DetailsHeaderProps) => {
+const DetailsHeader = ({ game, sections, id, nickname, image }: DetailsHeaderProps) => {
   const router = useRouter()
+
+  const { user } = authHook()
+
+  if (!user) return <p></p>
+  if (!id) id = user.id
+  if (!image) image = user.image
+  if (!nickname) nickname = user.nickname
 
   return (
     <S.Container>

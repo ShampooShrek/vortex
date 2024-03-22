@@ -1,20 +1,36 @@
-"use client"
 import AuthProvider from '@/data/context/authContext'
 import '../styles/global.css'
 import StyledComponentsRegistry from '@/libs/registry'
+import { cookies } from 'next/headers';
 
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import Head from 'next/head';
 import { MessageBoxProvider } from '@/data/context/messageContent';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import Script from 'next/script';
+import { UserAuth } from '@/models/frontModels';
+import { GetUserByToken } from '@/utils/ApiRequests';
+import { headers } from "next/headers"
 
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  let user: null | UserAuth = null
+  const token = cookies().get("vortex-auth-token")
+  const href = headers().get("referer")
+  if (href) {
+    const pathname = href.split(`${process.env.NEXT_PUBLIC_HREF ?? "http://localhost:3000"}`)[1]
+    const noRequestUrls = ["/", "/auth/signIn", "/auth/signUp"]
+
+    const inNoRequestsUrl = noRequestUrls.some(loc => loc === pathname)
+
+    if (token && !inNoRequestsUrl) {
+      const resp = await GetUserByToken(token.value)
+      if (typeof resp !== "string") user = resp
+    }
+  }
+
   return (
     <html lang="pt-br">
       <Head>
@@ -23,14 +39,7 @@ export default function RootLayout({
       <body>
         <link href="https://unpkg.com/react-image-crop/dist/ReactCrop.css" rel="stylesheet" />
         <Script src="https://unpkg.com/react-image-crop/dist/index.umd.cjs"></Script>
-        <ProgressBar
-          height="3px"
-          color="#AB1A1A"
-          options={{ showSpinner: false }}
-          shallowRouting
-        />
-
-        <AuthProvider>
+        <AuthProvider userProps={user} >
           <MessageBoxProvider>
             <StyledComponentsRegistry>
               <SkeletonTheme baseColor={"#090A0E"} highlightColor={"#131419"}>

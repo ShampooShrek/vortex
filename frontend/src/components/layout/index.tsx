@@ -7,6 +7,8 @@ import TopBar from "./topBar";
 import authHook from "@/data/hooks/authHook";
 import { useRouter } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { User } from "@/models/dbModels";
+import { UserAuth } from "@/models/frontModels";
 
 interface LayoutProps {
   topBarUser?: boolean;
@@ -21,7 +23,7 @@ export function Layout({ children, header = true, topbar = true, topBarUser = tr
 
   const queryClient = new QueryClient()
 
-  const { user, loading } = authHook()
+  const { loading, setUser, user } = authHook()
   const router = useRouter()
 
 

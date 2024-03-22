@@ -7,7 +7,7 @@ import { useState, useEffect } from "react"
 import ApiRequest from "@/utils/ApiRequests";
 import * as S from "./style"
 import authHook from "@/data/hooks/authHook";
-import { OtherUsers, SocialRequestInterface, UserFriendsRequests } from "@/models/frontModels";
+import { OtherUsers, SocialIdsRequestInterface, UserFriendsRequests } from "@/models/frontModels";
 import Link from "next/link";
 import messageAuth from "@/data/hooks/messageHook";
 
@@ -18,7 +18,7 @@ interface Users {
 }
 
 interface SearchUsersProps {
-  data: SocialRequestInterface | string | null
+  data: SocialIdsRequestInterface | string | null
 }
 
 export default function SearchUsers({ data }: SearchUsersProps) {
@@ -56,7 +56,7 @@ export default function SearchUsers({ data }: SearchUsersProps) {
         if (response.type === "success") {
           const userRequests = [...userSocial.friendRequestsSent]
           userRequests.push(response.response as UserFriendsRequests)
-          setUserSocial(prev => ({ ...prev as SocialRequestInterface, friendRequestsSent: userRequests }))
+          setUserSocial(prev => ({ ...prev as SocialIdsRequestInterface, friendRequestsSent: userRequests }))
         } else {
           showMessageBox(response.response as string, "error")
         }
@@ -71,7 +71,7 @@ export default function SearchUsers({ data }: SearchUsersProps) {
       if (response) {
         if (response.type === "success") {
           const userRequests = [...userSocial.friendRequestsSent].filter(r => r.id !== requestId)
-          setUserSocial(prev => ({ ...prev as SocialRequestInterface, friendRequestsSent: userRequests }))
+          setUserSocial(prev => ({ ...prev as SocialIdsRequestInterface, friendRequestsSent: userRequests }))
         } else {
           showMessageBox(response.response as string, "error")
         }
@@ -88,7 +88,7 @@ export default function SearchUsers({ data }: SearchUsersProps) {
           const userRequests = [...userSocial.friendRequestsReceived].filter(r => r.id !== requestId)
           const friends = [...userSocial.friends]
           friends.push(friendId as OtherUsers)
-          setUserSocial(prev => ({ ...prev as SocialRequestInterface, friendRequestsReceived: userRequests, friends }))
+          setUserSocial(prev => ({ ...prev as SocialIdsRequestInterface, friendRequestsReceived: userRequests, friends }))
         } else {
           showMessageBox(response.response as string, "error")
         }

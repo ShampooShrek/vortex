@@ -32,7 +32,6 @@ export default async function Home() {
 
       for (const key in homeData.response) {
         const keyResp = homeData.response[key as keyof HomeRequest]
-        console.log(typeof keyResp)
         if (typeof keyResp === "string") return null
       }
 
@@ -46,12 +45,12 @@ export default async function Home() {
   const fetching = async (): Promise<HomeRequest> => {
     let requests = 0
     let resp = await fetchData()
-    while (!resp && requests < 3) {
+    while (!resp && requests < 5) {
       requests++
       resp = await fetchData()
     }
 
-    if (requests >= 3)
+    if (requests >= 5 && !resp)
       redirect("/search/games")
     else
       return resp as HomeRequest

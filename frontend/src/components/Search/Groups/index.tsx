@@ -7,7 +7,7 @@ import { useState, useEffect } from "react"
 import ApiRequest from "@/utils/ApiRequests";
 import * as S from "./style"
 import authHook from "@/data/hooks/authHook";
-import { Groups, OtherUsers, SocialRequestInterface, UserFriendsRequests } from "@/models/frontModels";
+import { Groups, OtherUsers, SocialIdsRequestInterface, SocialRequestInterface, UserFriendsRequests } from "@/models/frontModels";
 import Link from "next/link";
 import messageAuth from "@/data/hooks/messageHook";
 
@@ -18,7 +18,7 @@ interface Users {
 }
 
 interface SearchGroupsProps {
-  data: SocialRequestInterface | string | null
+  data: SocialIdsRequestInterface | string | null
 }
 
 export default function SearchGroups({ data }: SearchGroupsProps) {

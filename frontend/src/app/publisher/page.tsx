@@ -13,17 +13,14 @@ const PublisherPage = async () => {
   const token = useCookies.get("vortex-auth-token")
   if (!token) redirect("/home")
 
-
-  const [developerGames, user] = await Promise.all([
-    getGameDevelopers(token.value), GetUserByToken(token.value)
-  ])
+  const developerGames = await getGameDevelopers(token.value)
 
 
-  if (typeof user === "string" || typeof developerGames === "string") redirect("/home")
+  if (typeof developerGames === "string") redirect("/home")
 
   return (
     <Layout needConfirmEmail >
-      <DetailsHeader nickname={user.nickname} image={user.image} id={user.id} sections={["Publicante"]} />
+      <DetailsHeader sections={["Publicante"]} />
       <Publisher games={developerGames} />
     </Layout>
   )

@@ -191,6 +191,21 @@ export interface StoreAchievements {
   game: GamesStore
 }
 
+
+type Id = { id: number }
+type IdStr = { id: string }
+
+export interface SocialIdsRequestInterface {
+  adminGroups: Id[]
+  groupRequests: DbModels.GroupRequests[]
+  groups: Id[]
+  userBlocks: IdStr[]
+  blockedByUsers: IdStr[]
+  friends: IdStr[]
+  friendRequestsReceived: UserFriendsRequests[]
+  friendRequestsSent: UserFriendsRequests[]
+}
+
 export interface SocialRequestInterface {
   adminGroups: Groups[]
   groupRequests: DbModels.GroupRequests[]

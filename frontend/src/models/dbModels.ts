@@ -1,6 +1,10 @@
 import { MouseEventHandler } from "react"
 import { GamesStore } from "./frontModels"
 
+export interface UserIdRequest {
+  id: string
+}
+
 export interface User {
   id: string
   name: string

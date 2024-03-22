@@ -6,7 +6,7 @@ import BlockedUsers from "@/components/profile/Social/Users/BlockedUsers"
 import Friends from "@/components/profile/Social/Users/Friends"
 import PendingEnvites from "@/components/profile/Social/Users/PendingEnvites"
 import { SocialRequestInterface } from "@/models/frontModels"
-import { GetUserByToken, SocialRequest } from "@/utils/ApiRequests"
+import { GetIdByToken, SocialRequest } from "@/utils/ApiRequests"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -29,8 +29,8 @@ const Social = async ({ params: { userId } }: SocialProps) => {
   const cookiesStore = cookies()
   const token = cookiesStore.get("vortex-auth-token")
   if (token?.value) {
-    const data = await GetUserByToken(token.value)
-    if (typeof data === "string" || data.id !== userId)
+    const id = await GetIdByToken(token.value)
+    if (typeof id === "string" || id.id !== userId)
       redirect(`/profile/${userId}`)
   } else {
     redirect(`/profile/${userId}`)

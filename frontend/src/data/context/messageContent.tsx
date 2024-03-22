@@ -1,3 +1,5 @@
+"use client"
+
 import MessageBox from '@/components/MessageBox'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 

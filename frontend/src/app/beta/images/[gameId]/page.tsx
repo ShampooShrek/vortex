@@ -4,7 +4,6 @@ import { GameImageCap } from "@/models/dbModels"
 import { GamesStoreEdit, Response, UserAuth } from "@/models/frontModels"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
-import { GetUserByToken } from "@/utils/ApiRequests"
 import DetailsHeader from "@/components/profile/DetailsHeader"
 
 interface BetaGameImagesProps {
@@ -24,15 +23,10 @@ export default async function BetaGameImages({ params: { gameId } }: BetaGameIma
     }
   }).then(resp => resp.json())
 
-  const userResponse = await GetUserByToken(token.value)
-
   if (typeof gameResponse === "string") redirect("/home");
-  if (typeof userResponse === "string") redirect("/home");
 
   const { gameBackgroundImage, images, videos, gameIconImage, gamePopularImage, verticalCap, horizontalCap, name, id }
     = gameResponse.response as GamesStoreEdit
-
-  const user = userResponse as UserAuth
 
 
   const Image = ({ img, type }: { img: GameImageCap, type: string }) => {
@@ -46,7 +40,7 @@ export default async function BetaGameImages({ params: { gameId } }: BetaGameIma
 
   return (
     <Layout needConfirmEmail>
-      <DetailsHeader nickname={user.nickname} id={user.id} sections={["administração", "jogo", "imagen", `${name} (${id})`]} />
+      <DetailsHeader sections={["administração", "jogo", "imagem", `${name} (${id})`]} />
       <Image img={horizontalCap} type="Imagem Horizontal" />
       <Image img={verticalCap} type="Imagem Vertical" />
       <Image img={gamePopularImage} type="Imagem de jogo Popular" />

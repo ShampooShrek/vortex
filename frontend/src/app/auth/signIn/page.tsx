@@ -37,11 +37,13 @@ const SignIn = () => {
   const handleLogin = async () => {
     setInRequest(true)
     const resp = await login(user.name, user.password)
+
     if (typeof resp === "string") {
       showMessageBox(resp, "error")
       setInRequest(false)
     } else {
-      window.location.href = "/search/games"
+      router.refresh()
+      router.push("/home")
     }
   }
 

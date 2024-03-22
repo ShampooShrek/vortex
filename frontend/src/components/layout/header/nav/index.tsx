@@ -4,12 +4,10 @@ import { useState, FC, useRef, useEffect } from "react"
 import * as S from "./style"
 import { NavLinks } from "@/components/Link"
 import { Bars3Icon, CartIcon, FavoriteIcon, NotificationIcon, SearchIcon, UserIcon } from "../../../Icons"
-import { DropDown } from "../dropDown"
 import Link from "next/link"
 import authHook from "@/data/hooks/authHook"
 import ApiRequest from "@/utils/ApiRequests"
 import { GamesStore } from "@/models/frontModels"
-import { useRouter } from "next/navigation"
 import messageAuth from "@/data/hooks/messageHook"
 
 export function Nav() {
@@ -29,7 +27,7 @@ export function Nav() {
   const [isAsideOpen, setIsAsideOpen] = useState(false)
 
   useEffect(() => {
-    if (user) {
+    if (user && user.cart) {
       setCartLenght(user.cart.length)
     }
   }, [user])
@@ -39,8 +37,8 @@ export function Nav() {
       const timeout = setTimeout(() => {
         const getGames = async () => {
           const games = await ApiRequest<GamesStore[]>(`/api/games/search/${searchValue}`, "get")
-          if(games) {
-            if(games.type === "success") {
+          if (games) {
+            if (games.type === "success") {
               setDropDownGames(games.response as GamesStore[])
             } else {
               showMessageBox(games.response as string, "error")
@@ -92,7 +90,7 @@ export function Nav() {
 
   return (
     <S.NavComponent>
-      <S.NavMobileBlack  isOpen={isAsideOpen}/>
+      <S.NavMobileBlack isOpen={isAsideOpen} />
       <S.NavMobileAside isOpen={isAsideOpen}>
         <S.NavMobileAsideIcon>
           <Bars3Icon onClick={() => setIsAsideOpen(p => !p)} />
@@ -160,8 +158,8 @@ export function Nav() {
         )}
       </S.Icons>
       <S.MobileIcons>
-          <Bars3Icon onClick={() => setIsAsideOpen(p => !p)} />
-      <S.SearchSpan>
+        <Bars3Icon onClick={() => setIsAsideOpen(p => !p)} />
+        <S.SearchSpan>
           <S.InputContainer>
             <S.Input
               isOpen={activedSearch}

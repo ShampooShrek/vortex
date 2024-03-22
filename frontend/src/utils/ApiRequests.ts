@@ -264,6 +264,28 @@ export const GetUserByToken = async (token: string): Promise<Models2.UserAuth | 
   }
 }
 
+
+export const GetIdByToken = async (token: string): Promise<Models.UserIdRequest | string> => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/auth/id`, {
+      cache: "no-store",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+    })
+
+
+    const user: Response<Models.UserIdRequest> = await response.json()
+    console.log(user)
+
+    if (user.type === "success") {
+      return user.response as Models.UserIdRequest
+    } else {
+      return user.response as string
+    }
+  } catch (error) {
+    return error as string
+  }
+}
+
 export const GetUserDetails = async (userId: string, token: string | null): Promise<Models2.UserDetails | string> => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/details`, {
@@ -426,9 +448,9 @@ export const GetGameEdit = async (gameId: number, token: string): Promise<string
   }
 }
 
-export const GetAdminCoisas = async (token: string): Promise<string | Models2.AdminModels> => {
+export const GetAdminData = async (token: string): Promise<string | Models2.AdminModels> => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/admins/get_coisas`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/admins/get_data`, {
       cache: "no-store",
       headers: {
         'authorization': `Bearer ${token}`
@@ -544,6 +566,30 @@ export const SocialRequest = async (token: string): Promise<string | Models2.Soc
 
     if (games.type === "success") {
       return games.response as Models2.SocialRequestInterface
+    } else {
+      return games.response as string
+    }
+
+  } catch (error) {
+    return error as string
+  }
+}
+
+export const SocialIdsRequest = async (token: string): Promise<string | Models2.SocialIdsRequestInterface> => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/account/social/ids`, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    const games: Response<Models2.SocialIdsRequestInterface> = await response.json()
+
+    if (games.type === "success") {
+      return games.response as Models2.SocialIdsRequestInterface
     } else {
       return games.response as string
     }

@@ -57,9 +57,9 @@ const setAuthCookies = (key: string, login: boolean, value: string) => {
 
 export const AuthContext = createContext({} as ContextProps)
 
-export default function AuthProvider({ children }: { children: React.ReactNode }) {
+export default function AuthProvider({ children, userProps }: { children: React.ReactNode, userProps: UserAuth | null }) {
 
-  const [user, setUser] = useState<UserAuth | null>(null)
+  const [user, setUser] = useState<UserAuth | null>(userProps)
   const [usersOnline, setUsersOnline] = useState<UsersOnline[]>([])
   const [friendsWithMessages, setFriendsWithMessages] = useState<FriendsWithMessages[]>([])
   const [groupsWithMessages, setGroupsWithMessages] = useState<GroupsWithMessages[]>([])
@@ -71,38 +71,29 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const router = useRouter()
 
   useEffect(() => {
-    async function validateToken() {
-      const token = getCookie("vortex-auth-token")
-      if (!token) {
-        setUser(null)
-        setLogged(false)
-        setLoading(false)
-      } else {
-        setSocket(io(`${process.env.NEXT_PUBLIC_API_URL}`))
-        const response = await ApiRequest<UserAuth>("/api/users/auth/authentication", "post", { token })
-        if (response && response.type === "success") {
-          const dataUser = response.response as UserAuth
-          setUser({
-            ...dataUser, adminGroups: [], groups: []
-          })
-          setLogged(true)
-        }
-        setLoading(false)
-      }
-    }
+    if (user) console.log(user.nickname)
+    else console.log("aaaa" + user)
+  }, [user, userProps])
 
-    validateToken()
-  }, [])
+  useEffect(() => {
+    // if (user) setUser(prev => ({ ...prev!, adminGroups: prev!.adminGroups ? prev!.adminGroups : [], groups: prev!.groups ? prev!.groups : [] }))
+    setLogged(user ? true : false)
+    setLoading(false)
+  }, [user])
 
   useEffect(() => {
     if (!loading) {
-      const connection = io(`${process.env.NEXT_PUBLIC_API_URL}`)
-      setSocket(connection)
+      setTimeout(() => {
+        const connection = io(`${process.env.NEXT_PUBLIC_API_URL}`, {
+          timeout: 5000
+        })
+        setSocket(connection)
+      }, 5000)
     }
   }, [loading])
 
   useEffect(() => {
-    if (logged && socket) {
+    if (user && socket) {
       socket.emit("login", user!.id)
 
       return () => { socket.off("login") }
@@ -166,21 +157,18 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
   }, [groupsWithMessages, socket])
 
-  const login = async (nicknameOrEmail: string, password: string) => {
+  const login = async (nicknameOrEmail: string, password: string): Promise<LoginResponse | string> => {
     const response = await ApiRequest<LoginResponse>("/api/users/auth", "post", { nicknameOrEmail, password })
     if (response) {
       if (response.type === "success") {
         const data = response.response as LoginResponse
         api.defaults.headers["Authorization"] = `Bearer ${data.token}`
         setAuthCookies("vortex-auth-token", true, data.token)
-        setUser(data.user)
-        setLogged(true)
-        router.push("/home")
-        return true
+        return data
       } else {
         return response.response
       }
-    }
+    } else return "Ops, algo deu errado, tente novamente mais tarde!"
   }
 
   const addToCart = async (gameId: number) => {

@@ -12,7 +12,7 @@ import * as Groups from "../controllers/UserController/group"
 import * as Chat from "../controllers/UserController/chat"
 import TokenVerify, { TokenOptional } from "../middlewares/TokenVerify"
 import { SignIn } from "../controllers/UserController/Auth/login"
-import { GetUserByToken, refreshToken } from "../controllers/UserController/Auth/token"
+import { GetIdByToken, GetUserByToken, refreshToken } from "../controllers/UserController/Auth/token"
 import { GetAdminData } from "../controllers/UserController/admin"
 import { getMessages } from "../controllers/UserController/messages"
 import { getGameDevelopers } from "../controllers/GamesController/games"
@@ -23,6 +23,7 @@ const routes: Router = Router()
 routes.post("/api/users/auth", SignIn)
 routes.post("/api/refresh_token", refreshToken)
 routes.post("/api/users/auth/authentication", GetUserByToken)
+routes.get("/api/users/auth/id", TokenVerify, GetIdByToken)
 
 routes.route("/api/users")
   .post(User.postUser)
@@ -35,6 +36,7 @@ routes.route("/api/users/:userId")
 
 routes.get("/api/users/recover_key/:key", User.GetUserByRecoverKey)
 routes.get("/api/users/account/social", TokenVerify, User.Social)
+routes.get("/api/users/account/social/ids", TokenVerify, User.SocialIds)
 routes.get("/api/users/account/edit", TokenVerify, User.Edit)
 routes.post("/api/users/:userId/send_new_email", User.sendNewEmail)
 // routes.post("/api/users/:userId/send_conf_email", User.SendConfEmail)
@@ -130,7 +132,7 @@ routes.put("/api/groups/update/:groupId", TokenVerify, Groups.updateGroup)
 routes.put("/api/groups/update/:groupId/images/:tag", userImageUpload.single("file"), TokenVerify, Groups.updateGroupImages)
 
 // -- Admin --
-routes.get("/api/users/admins/get_coisas", TokenVerify, GetAdminData)
+routes.get("/api/users/admins/get_data", TokenVerify, GetAdminData)
 
 // -- Chat --
 routes.post("/api/users/chat/files/image", userChatImageUpload.single("file"), TokenVerify, Chat.addChatImage)

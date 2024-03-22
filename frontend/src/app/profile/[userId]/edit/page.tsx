@@ -1,7 +1,7 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { Layout } from "@/components/layout"
-import { EditRequest, GetUserByToken } from "@/utils/ApiRequests"
+import { EditRequest } from "@/utils/ApiRequests"
 import ProfileLayout from "@/components/profile/ProfileDetailsSocialsLayout"
 import ProfileEditGeneral from "@/components/profile/ProfileEdit/ProfileEditGeneral"
 import ProfileImage from "@/components/profile/ProfileEdit/ProfileImage"
@@ -26,13 +26,7 @@ type Sections = {
 const Social = async ({ params: { userId } }: ProfileEditProps) => {
   const cookiesStore = cookies()
   const token = cookiesStore.get("vortex-auth-token")
-  if (token?.value) {
-    const data = await GetUserByToken(token.value)
-    if (typeof data === "string" || data.id !== userId)
-      redirect(`/profile/${userId}`)
-  } else {
-    redirect(`/home`)
-  }
+  if (!token) redirect("/home")
 
   const userEditResponse = await EditRequest(token.value)
 
@@ -49,7 +43,6 @@ const Social = async ({ params: { userId } }: ProfileEditProps) => {
         { name: "Privacidade", sectionName: "privacity", component: <EditPrivacity privacity={user.privacity} /> },
       ]
     }
-    // { name: "Grupo Favorito", section: "favoriteGroups" },
   ]
 
   return (

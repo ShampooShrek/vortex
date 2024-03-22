@@ -1,6 +1,6 @@
 import { Layout } from "@/components/layout";
 import { cookies } from "next/headers";
-import { SocialRequest } from "@/utils/ApiRequests"
+import { SocialIdsRequest } from "@/utils/ApiRequests"
 import SearchGroups from "@/components/Search/Groups";
 
 
@@ -11,8 +11,8 @@ export default async function SearchGroupsPage() {
 
   let data = null;
 
-  if(token) {
-    data = await SocialRequest(token.value)
+  if (token) {
+    data = await SocialIdsRequest(token.value)
   }
 
   return (

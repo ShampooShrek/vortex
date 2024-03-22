@@ -29,7 +29,7 @@ const UserGameAchievements = async ({ params: { gameId, userId } }: UserGameAchi
 
   return (
     <Layout needConfirmEmail>
-      <DetailsHeader id={userId} image={user.image} nickname={user.nickname}
+      <DetailsHeader id={userId!} image={user.image} nickname={user.nickname}
         game={userAchievements.game} />
       <UserDetailsAchievements gameAchievementsNot={gameAchievements} achievements={userAchievements} />
     </Layout>

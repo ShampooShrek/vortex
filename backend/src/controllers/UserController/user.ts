@@ -232,19 +232,11 @@ export const getUser = async (req: Request, res: Response) => {
   let user: null | User = null
   try {
     const getUserProfile = async () => {
-      return await prisma.user.findUnique({
+      return prisma.user.findUnique({
         where: { id: userId },
         include: {
           image: true,
-          privacity: true
-        }
-      });
-    }
-
-    const getGamesAndAchievements = async () => {
-      return await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
+          privacity: true,
           games: {
             where: { status: "ACEPTED" },
             include: {
@@ -254,43 +246,60 @@ export const getUser = async (req: Request, res: Response) => {
             },
             take: 3,
           },
-          favorites: { include: { horizontalCap: true, achievements: { include: { image: true } } } },
-          wishList: { include: { horizontalCap: true } },
           userAchievements: { select: { achievement: { include: { image: true } } } }
         }
       });
     }
 
+    const getGamesAndAchievements = async () => {
+      const wishList = await prisma.games.findMany({
+        where: { wishList: { some: { id: userId } } },
+        include: { horizontalCap: true }
+      })
+
+      const favorites = await prisma.games.findMany({
+        where: { favorites: { some: { id: userId } } },
+        include: { horizontalCap: true, achievements: { include: { image: true } } }
+      })
+
+      return { wishList, favorites }
+    }
+
     const getGroups = async () => {
-      return await prisma.user.findUnique({
-        where: { id: userId },
+      const allGroups = await prisma.group.findMany({
+        where: { OR: [{ users: { some: { id: userId } } }, { admins: { some: { id: userId } } }] },
         include: {
-          groups: { include: { image: true, users: true } },
-          adminGroups: { include: { image: true, users: true } }
+          image: true,
+          users: true,
+          admins: true
         }
       });
+
+      const groups = allGroups.filter(f => f.users.some(u => u.id === userId))
+      const adminGroups = allGroups.filter(f => f.admins.some(u => u.id === userId))
+
+      return { groups, adminGroups }
     }
 
     const getFriends = async (): Promise<any> => {
-      return await prisma.user.findUnique({
-        where: { id: userId },
+      const resp = await prisma.friendsAndUsers.findMany({
+        where: { userId },
         include: {
-          friends: { include: { user: { include: { image: true } } } }
+          friend: { include: { image: true } }
         }
       });
+      const friends = resp.map(r => r.friend)
+      return { friends }
     }
-    let [userProfile, gamesAndAchievements, groups, friends] = await Promise.all([
-      getUserProfile(),
-      getGamesAndAchievements(),
-      getGroups(),
-      getFriends()
-    ]);
+
+    let userProfile = await getUserProfile();
+    let gamesAndAchievements = await getGamesAndAchievements();
+    let groups = await getGroups();
+    let friends = await getFriends();
 
     if (!userProfile || !gamesAndAchievements || !groups || !friends) {
       return res.status(404).json({ type: "error", response: "Perfil não encontrado" });
     }
-
-    friends = friends.friends.map((friend: any) => ({ ...friend.user }))
 
     const { privacity } = userProfile;
 
@@ -327,7 +336,7 @@ export const getUser = async (req: Request, res: Response) => {
     }
 
     if (user !== null) {
-      const userIsFriend = friends.find((u: any) => u.id === user!.id);
+      const userIsFriend = profile.friends.find((u: any) => u.id === user!.id);
 
       if (friends && privacity?.friendList === "FRIENDS" && !userIsFriend) {
         delete profile.friends;
@@ -347,6 +356,7 @@ export const getUser = async (req: Request, res: Response) => {
     }
     return res.status(200).json({ type: "success", response: profile })
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ type: "error", response: error500Msg })
   } finally {
     await prisma.$disconnect()
@@ -586,6 +596,51 @@ export const Social = async (req: Request, res: Response) => {
         friendRequestsReceived: { include: { sender: { include: { image: true } } }, where: { status: "PENDING" } },
         friendRequestsSent: { include: { receiver: { include: { image: true } } }, where: { status: "PENDING" } },
         adminGroups: { include: { image: true } }
+      }
+    })
+
+
+    const data = {
+      friends: user?.friends.map(f => f.user),
+      blockedByUsers: user?.blocks.map(f => f.blockedUser),
+      userBlocks: user?.UserBlockId.map(b => b.blockedUser),
+      groupRequests: user?.groupRequests.map(f => ({ date: f.date, group: f.group })),
+      friendRequestsReceived: user?.friendRequestsReceived,
+      friendRequestsSent: user?.friendRequestsSent,
+      adminGroups: user?.adminGroups,
+      groups: user?.groups
+    }
+
+
+    if (user) {
+      return res.status(200).json({ type: "success", response: data })
+    } else {
+      return res.status(400).json({ type: "error", response: "Usuário não encontrado" })
+    }
+
+  } catch (err) {
+    return res.status(500).json({ type: "error", response: error500Msg })
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+
+export const SocialIds = async (req: Request, res: Response) => {
+  const userId = req.body.token.userId
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        friends: { select: { user: { select: { id: true } } } },
+        blocks: { select: { blockedUser: { select: { id: true } } } },
+        UserBlockId: { select: { blockedUser: { select: { id: true } } } },
+        groups: { select: { id: true } },
+        groupRequests: { select: { date: true, group: { select: { id: true } } }, where: { status: { equals: "PENDING" } } },
+        friendRequestsReceived: { include: { sender: { select: { id: true } } }, where: { status: "PENDING" } },
+        friendRequestsSent: { include: { receiver: { select: { id: true } } }, where: { status: "PENDING" } },
+        adminGroups: { select: { id: true } }
       }
     })
 

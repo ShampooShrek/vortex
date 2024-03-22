@@ -14,6 +14,31 @@ export const createToken = (userId: string) => {
   return token
 }
 
+export const GetIdByToken = async (req: Request, res: Response) => {
+  const token = req.body.token
+
+  try {
+    if (!token) return res.status(400).json({ type: "error", response: noTokenMsg })
+    const userId = token.userId
+
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true }
+    })
+
+    console.log(user)
+
+    if (!user) return res.status(400).json({ type: "error", response: "Usuário não encontrado!" })
+
+    return res.status(200).json({ type: "success", response: { id: user.id } })
+  } catch (err) {
+    return res.status(500).json({ type: "error", response: error500Msg })
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
 export const GetUserByToken = async (req: Request, res: Response) => {
   const { token }: { token: string } = req.body
 
@@ -47,10 +72,7 @@ export const GetUserByToken = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(500).json({ type: "error", response: error500Msg })
-  } finally {
-    await prisma.$disconnect()
   }
-
 }
 
 export const refreshToken = async (req: Request, res: Response) => {
