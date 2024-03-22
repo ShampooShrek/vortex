@@ -67,7 +67,7 @@ const PublisherEdit = ({ game: gameProps, tags }: PublisherEditProps) => {
     setGame(prevGame => ({ ...prevGame, ...data }))
   }
 
-  if (loading) return ""
+  if (loading) return <p></p>
 
   return (
     <>

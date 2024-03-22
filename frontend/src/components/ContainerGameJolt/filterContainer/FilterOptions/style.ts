@@ -3,7 +3,7 @@
 import vars from "@/styles/vars"
 import styled from "styled-components"
 
-interface StyledProps{
+interface StyledProps {
   isSelected?: boolean
 }
 
@@ -13,7 +13,7 @@ export const FilterOptions = styled.div<StyledProps>`
   z-index: 0;
   border: 1.5px solid ${vars.secundaryColor};
   border-bottom: 4px solid ${vars.secundaryColor};
-  border-bottom: ${props => props.isSelected ? "2px solid " + vars.secundaryColor + "00" 
+  border-bottom: ${props => props.isSelected ? "2px solid " + vars.secundaryColor + "00"
     : "2px solid " + vars.secundaryColor};
   margin-right: 10px;
   font-size: .9rem;
@@ -29,5 +29,16 @@ export const FilterOptions = styled.div<StyledProps>`
     font-size: .8rem;
     margin-right: 5px;
     padding: 6px;
+
+  &:first-child {
+    margin-left: 4px;
   }
+  }
+
+  @media screen and (max-width: 400px) {
+    font-size: .70rem;
+    margin-right: 4px;
+    padding: 6px 2px;
+  }
+  
 `

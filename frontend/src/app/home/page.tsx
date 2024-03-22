@@ -26,7 +26,6 @@ export default async function Home() {
       })
 
       const homeData: Response<HomeRequest> = await homeResponse.json()
-      console.log(homeData)
 
       if (typeof homeData.response === "string") return null
 

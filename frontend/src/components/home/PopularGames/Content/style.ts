@@ -91,15 +91,19 @@ export const ImageTextContainer = styled.div`
  }
 
  @media screen and (max-width: 650px) {
-    max-width: 80%;
+    max-width: 90%;
     P {
-      font-size: .85rem;
+      font-size: .75rem;
     }
 
     span {
-      font-size: 1rem;
-      margin: 10px 0;
+      font-size: .8rem;
+      margin: 5px 0;
     }
+
+      h1 {
+        font-size: 1rem;
+      }
  }
 
 `
@@ -246,9 +250,9 @@ export const Button = styled(Link)`
 
   @media screen and (max-width: 650px) {
     margin-top: 5px;
-    width: 150px;
-    padding: 6px 2px;
-    font-size: 1.1rem;
+    width: 120px;
+    padding: 6px 4px;
+    font-size: .9rem;
     background-color: ${vars.secundaryColor};
     border: 2px solid ${vars.secundaryColor};
   }

@@ -29,16 +29,25 @@ const DetailsHeader = ({ game, sections, id, nickname, image }: DetailsHeaderPro
   return (
     <S.Container>
       <S.UserContainer>
-        <S.UserImage>
-          <img src={image ? image.url : "/player.jpg"} alt={image ? image.originalName : "player"} />
-        </S.UserImage>
-        <S.UserNickname> <Link replace href={`/profile/${id}`}>{nickname}</Link> {game && (<span>-</span>)} </S.UserNickname>
-        {game && <S.GameName>{typeof game === "string" ? game : game.name}</S.GameName>}
-        {sections && sections.map(s => (<S.GameName key={s}>- {s} </S.GameName>))}
+        <S.UserImageNickanme>
+          <S.UserImage>
+            <img src={image ? image.url : "/player.jpg"} alt={image ? image.originalName : "player"} />
+          </S.UserImage>
+          <S.UserNickname> <Link replace href={`/profile/${id}`}>{nickname} </Link> </S.UserNickname>
+        </S.UserImageNickanme>
+        <S.DesktopSections>
+          {game && <S.GameName> - {typeof game === "string" ? game : game.name}</S.GameName>}
+          {sections && sections.map(s => (<S.GameName key={s}> - {s} </S.GameName>))}
+        </S.DesktopSections>
       </S.UserContainer>
       {game && typeof game === "object" && (
         <S.GameImage onClick={() => router.push(`/store/games/${game.id}`)} src={game.horizontalCap ? game.horizontalCap.url : "/player.jpg"} />
       )}
+
+      <S.MobileSections>
+        {game && <S.GameName>{typeof game === "string" ? game : game.name}</S.GameName>}
+        {sections && sections.map((s, i) => (<S.GameName key={s}>{i > 0 && "-"} {s} </S.GameName>))}
+      </S.MobileSections>
     </S.Container>
   )
 }

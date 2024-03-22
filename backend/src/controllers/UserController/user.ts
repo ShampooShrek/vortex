@@ -236,7 +236,8 @@ export const getUser = async (req: Request, res: Response) => {
             },
             take: 3,
           },
-          userAchievements: { select: { achievement: { include: { image: true } } } }
+          userAchievements: { select: { achievement: { include: { image: true } } } },
+          gamesAvaliations: { where: { deleted: false, game: { status: "ACEPTED" } }, include: { game: { include: { horizontalCap: true } } } }
         }
       });
     }

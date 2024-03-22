@@ -66,6 +66,7 @@ const Profile = async ({ params: { userId } }: ProfileProps) => {
 
   const { games, groups: userGroups, friends, favorites, wishList, gamesAvaliations, userAchievements, adminGroups, privacity, id }
     = userRequest.response as Profile
+  console.log(userRequest.response)
 
   const groups = [...adminGroups ?? [], ...userGroups ?? []]
 
